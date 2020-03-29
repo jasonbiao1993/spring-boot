@@ -79,12 +79,18 @@ class BeanDefinitionLoader {
 		Assert.notNull(registry, "Registry must not be null");
 		Assert.notEmpty(sources, "Sources must not be empty");
 		this.sources = sources;
+		// AnnotatedBeanDefinition 读取
 		this.annotatedReader = new AnnotatedBeanDefinitionReader(registry);
+		// XmlBeanDefinition 读取
 		this.xmlReader = new XmlBeanDefinitionReader(registry);
 		if (isGroovyPresent()) {
+			// 通过 groovy 读加载
 			this.groovyReader = new GroovyBeanDefinitionReader(registry);
 		}
+
+		// ClassPathBeanDefinition 扫描
 		this.scanner = new ClassPathBeanDefinitionScanner(registry);
+		// 添加扫描是的过滤资源
 		this.scanner.addExcludeFilter(new ClassExcludeFilter(sources));
 	}
 
@@ -148,12 +154,14 @@ class BeanDefinitionLoader {
 	}
 
 	private int load(Class<?> source) {
+		// groovy 加载
 		if (isGroovyPresent() && GroovyBeanDefinitionSource.class.isAssignableFrom(source)) {
 			// Any GroovyLoaders added in beans{} DSL can contribute beans here
 			GroovyBeanDefinitionSource loader = BeanUtils.instantiateClass(source, GroovyBeanDefinitionSource.class);
 			load(loader);
 		}
 		if (isComponent(source)) {
+			// 以注解的方式，将启动类bean信息存入beanDefinitionMap
 			this.annotatedReader.register(source);
 			return 1;
 		}

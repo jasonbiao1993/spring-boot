@@ -127,6 +127,7 @@ final class FailureAnalyzers implements SpringBootExceptionReporter {
 			return false;
 		}
 		for (FailureAnalysisReporter reporter : reporters) {
+			//上报错误log
 			reporter.report(analysis);
 		}
 		return true;

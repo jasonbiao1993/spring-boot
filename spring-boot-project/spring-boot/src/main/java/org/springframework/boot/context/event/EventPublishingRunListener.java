@@ -42,6 +42,8 @@ import org.springframework.util.ErrorHandler;
  * @author Andy Wilkinson
  * @author Artsiom Yudovin
  * @since 1.0.0
+ *
+ * springboot 通过自定义一些监听器，做一些初始化工作
  */
 public class EventPublishingRunListener implements SpringApplicationRunListener, Ordered {
 
@@ -54,8 +56,10 @@ public class EventPublishingRunListener implements SpringApplicationRunListener,
 	public EventPublishingRunListener(SpringApplication application, String[] args) {
 		this.application = application;
 		this.args = args;
+		// 监听广播处理器，观察者模式
 		this.initialMulticaster = new SimpleApplicationEventMulticaster();
 		for (ApplicationListener<?> listener : application.getListeners()) {
+			// 添加处理器
 			this.initialMulticaster.addApplicationListener(listener);
 		}
 	}
@@ -67,17 +71,20 @@ public class EventPublishingRunListener implements SpringApplicationRunListener,
 
 	@Override
 	public void starting() {
+		// 关键代码，这里是创建application启动事件`ApplicationStartingEvent`
 		this.initialMulticaster.multicastEvent(new ApplicationStartingEvent(this.application, this.args));
 	}
 
 	@Override
 	public void environmentPrepared(ConfigurableEnvironment environment) {
+		// springboot的Environment环境准备完成的时候
 		this.initialMulticaster
 				.multicastEvent(new ApplicationEnvironmentPreparedEvent(this.application, this.args, environment));
 	}
 
 	@Override
 	public void contextPrepared(ConfigurableApplicationContext context) {
+		// springboot 应用程序上下文初始化事件
 		this.initialMulticaster
 				.multicastEvent(new ApplicationContextInitializedEvent(this.application, this.args, context));
 	}
@@ -85,26 +92,31 @@ public class EventPublishingRunListener implements SpringApplicationRunListener,
 	@Override
 	public void contextLoaded(ConfigurableApplicationContext context) {
 		for (ApplicationListener<?> listener : this.application.getListeners()) {
+			// 设置监听器所需的 context
 			if (listener instanceof ApplicationContextAware) {
 				((ApplicationContextAware) listener).setApplicationContext(context);
 			}
 			context.addApplicationListener(listener);
 		}
+		// springboot 申请准备事件
 		this.initialMulticaster.multicastEvent(new ApplicationPreparedEvent(this.application, this.args, context));
 	}
 
 	@Override
 	public void started(ConfigurableApplicationContext context) {
+		// 应用启动事件
 		context.publishEvent(new ApplicationStartedEvent(this.application, this.args, context));
 	}
 
 	@Override
 	public void running(ConfigurableApplicationContext context) {
+		// 应用运行事件
 		context.publishEvent(new ApplicationReadyEvent(this.application, this.args, context));
 	}
 
 	@Override
 	public void failed(ConfigurableApplicationContext context, Throwable exception) {
+		// 失败是调用
 		ApplicationFailedEvent event = new ApplicationFailedEvent(this.application, this.args, context, exception);
 		if (context != null && context.isActive()) {
 			// Listeners have been registered to the application context so we should
@@ -120,7 +132,11 @@ public class EventPublishingRunListener implements SpringApplicationRunListener,
 					this.initialMulticaster.addApplicationListener(listener);
 				}
 			}
+
+			// 设置错误日志处理
 			this.initialMulticaster.setErrorHandler(new LoggingErrorHandler());
+
+			// 广播事件
 			this.initialMulticaster.multicastEvent(event);
 		}
 	}
