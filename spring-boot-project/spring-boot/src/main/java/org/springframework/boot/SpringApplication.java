@@ -373,13 +373,14 @@ public class SpringApplication {
 	private ConfigurableEnvironment prepareEnvironment(SpringApplicationRunListeners listeners,
 			ApplicationArguments applicationArguments) {
 		// Create and configure the environment
-		// 获取对应的ConfigurableEnvironment
+		// 1、初始化environment
 		ConfigurableEnvironment environment = getOrCreateEnvironment();
-		//配置
+		// 2、加载默认配置
 		configureEnvironment(environment, applicationArguments.getSourceArgs());
 		ConfigurationPropertySources.attach(environment);
 
 		//发布环境已准备事件，这是第二次发布事件, 此处可以自定义实现远端属性文件的加载
+		// 3、通知环境监听器，加载项目中的配置文件
 		listeners.environmentPrepared(environment);
 		//将获取到的environment中的spring.main配置绑定到SpringApplication的source中。
 		bindToSpringApplication(environment);
@@ -541,6 +542,7 @@ public class SpringApplication {
 		configurePropertySources(environment, args);
 
 		// 设置profile
+		// 设置active属性
 		configureProfiles(environment, args);
 	}
 
@@ -552,12 +554,14 @@ public class SpringApplication {
 	 * @see #configureEnvironment(ConfigurableEnvironment, String[])
 	 */
 	protected void configurePropertySources(ConfigurableEnvironment environment, String[] args) {
+		// 获取配置存储集合， Mutable 可变的属性资源集合
 		MutablePropertySources sources = environment.getPropertySources();
+		// 判断是否有默认配置，默认为空
 		if (this.defaultProperties != null && !this.defaultProperties.isEmpty()) {
 			sources.addLast(new MapPropertySource("defaultProperties", this.defaultProperties));
 		}
 
-		// 添加命令行属性
+		// 加载命令行配置
 		if (this.addCommandLineProperties && args.length > 0) {
 			String name = CommandLinePropertySource.COMMAND_LINE_PROPERTY_SOURCE_NAME;
 			if (sources.contains(name)) {

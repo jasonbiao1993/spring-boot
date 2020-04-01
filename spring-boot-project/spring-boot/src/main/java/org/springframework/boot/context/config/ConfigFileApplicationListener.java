@@ -300,16 +300,21 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 
 		private final Log logger = ConfigFileApplicationListener.this.logger;
 
+		// 当前环境
 		private final ConfigurableEnvironment environment;
 
 		private final PropertySourcesPlaceholdersResolver placeholdersResolver;
 
+		// 类加载器，可以在项目启动时通过 SpringApplication 构造方法指定，默认采用 Launcher.AppClassLoader加载器
 		private final ResourceLoader resourceLoader;
 
+		// 资源加载工具类
 		private final List<PropertySourceLoader> propertySourceLoaders;
 
+		// LIFO队列
 		private Deque<Profile> profiles;
 
+		// 已处理过的文件
 		private List<Profile> processedProfiles;
 
 		private boolean activatedProfiles;
@@ -320,8 +325,11 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 
 		Loader(ConfigurableEnvironment environment, ResourceLoader resourceLoader) {
 			this.environment = environment;
+			// 占位符解析器
 			this.placeholdersResolver = new PropertySourcesPlaceholdersResolver(this.environment);
+			// 获取类加载器
 			this.resourceLoader = (resourceLoader != null) ? resourceLoader : new DefaultResourceLoader();
+			// 获取propertySourceLoaders
 			this.propertySourceLoaders = SpringFactoriesLoader.loadFactories(PropertySourceLoader.class,
 					getClass().getClassLoader());
 		}
@@ -333,16 +341,20 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 						this.processedProfiles = new LinkedList<>();
 						this.activatedProfiles = false;
 						this.loaded = new LinkedHashMap<>();
+						// 初始化逻辑
 						initializeProfiles();
 						while (!this.profiles.isEmpty()) {
 							Profile profile = this.profiles.poll();
 							if (isDefaultProfile(profile)) {
 								addProfileToEnvironment(profile.getName());
 							}
+							// 定位解析资源文件
 							load(profile, this::getPositiveProfileFilter,
 									addToLoaded(MutablePropertySources::addLast, false));
 							this.processedProfiles.add(profile);
 						}
+
+						// 对加载过的配置文件进行排序
 						load(null, this::getNegativeProfileFilter, addToLoaded(MutablePropertySources::addFirst, true));
 						addLoadedPropertySources();
 						applyActiveProfiles(defaultProperties);
@@ -444,9 +456,11 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 		}
 
 		private void load(Profile profile, DocumentFilterFactory filterFactory, DocumentConsumer consumer) {
+			// 获取默认的配置文件路径
 			getSearchLocations().forEach((location) -> {
 				boolean isFolder = location.endsWith("/");
 				Set<String> names = isFolder ? getSearchNames() : NO_SEARCH_NAMES;
+				// 循环加载
 				names.forEach((name) -> load(location, name, profile, filterFactory, consumer));
 			});
 		}
