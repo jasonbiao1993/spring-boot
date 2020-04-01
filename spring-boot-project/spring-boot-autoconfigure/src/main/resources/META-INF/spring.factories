@@ -11,7 +11,7 @@ org.springframework.boot.autoconfigure.BackgroundPreinitializer
 org.springframework.boot.autoconfigure.AutoConfigurationImportListener=\
 org.springframework.boot.autoconfigure.condition.ConditionEvaluationReportAutoConfigurationImportListener
 
-# Auto Configuration Import Filters
+# Auto Configuration Import Filters ，条件过滤器，这里可以自定义实现自己的条件过滤器
 org.springframework.boot.autoconfigure.AutoConfigurationImportFilter=\
 org.springframework.boot.autoconfigure.condition.OnBeanCondition,\
 org.springframework.boot.autoconfigure.condition.OnClassCondition,\

@@ -57,6 +57,7 @@ public class EventPublishingRunListener implements SpringApplicationRunListener,
 		this.application = application;
 		this.args = args;
 		// 监听广播处理器，观察者模式
+		// spring事件机制通用的事件发布类
 		this.initialMulticaster = new SimpleApplicationEventMulticaster();
 		for (ApplicationListener<?> listener : application.getListeners()) {
 			// 添加处理器

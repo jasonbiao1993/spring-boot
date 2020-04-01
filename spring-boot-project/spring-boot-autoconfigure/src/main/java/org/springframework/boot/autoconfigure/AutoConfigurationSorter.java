@@ -37,6 +37,8 @@ import org.springframework.util.Assert;
  * {@link AutoConfigureBefore @AutoConfigureBefore} and
  * {@link AutoConfigureAfter @AutoConfigureAfter} annotations (without loading classes).
  *
+ * 排序实现
+ *
  * @author Phillip Webb
  */
 class AutoConfigurationSorter {

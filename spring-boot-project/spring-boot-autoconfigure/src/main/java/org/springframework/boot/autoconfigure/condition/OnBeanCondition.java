@@ -163,6 +163,7 @@ class OnBeanCondition extends FilteringSpringBootCondition implements Configurat
 		MatchResult result = new MatchResult();
 		Set<String> beansIgnoredByType = getNamesOfBeansIgnoredByType(classLoader, beanFactory, considerHierarchy,
 				spec.getIgnoredTypes(), parameterizedContainers);
+		// 因为实例代码中设置的是类型，所以这里会遍历类型，根据type获取目标bean是否存在
 		for (String type : spec.getTypes()) {
 			Collection<String> typeMatches = getBeanNamesForType(classLoader, considerHierarchy, beanFactory, type,
 					parameterizedContainers);
@@ -174,6 +175,8 @@ class OnBeanCondition extends FilteringSpringBootCondition implements Configurat
 				result.recordMatchedType(type, typeMatches);
 			}
 		}
+
+		// 根据注解寻找
 		for (String annotation : spec.getAnnotations()) {
 			Set<String> annotationMatches = getBeanNamesForAnnotation(classLoader, beanFactory, annotation,
 					considerHierarchy);
@@ -185,6 +188,8 @@ class OnBeanCondition extends FilteringSpringBootCondition implements Configurat
 				result.recordMatchedAnnotation(annotation, annotationMatches);
 			}
 		}
+
+		// 根据设置的name进行寻找
 		for (String beanName : spec.getNames()) {
 			if (!beansIgnoredByType.contains(beanName) && containsBean(beanFactory, beanName, considerHierarchy)) {
 				result.recordMatchedName(beanName);
@@ -403,12 +408,14 @@ class OnBeanCondition extends FilteringSpringBootCondition implements Configurat
 
 		Spec(ConditionContext context, AnnotatedTypeMetadata metadata, MergedAnnotations annotations,
 				Class<A> annotationType) {
+			// 读取 metadata中的设置的value
 			MultiValueMap<String, Object> attributes = annotations.stream(annotationType)
 					.filter(MergedAnnotationPredicates.unique(MergedAnnotation::getMetaTypes))
 					.collect(MergedAnnotationCollectors.toMultiValueMap(Adapt.CLASS_TO_STRING));
 			MergedAnnotation<A> annotation = annotations.get(annotationType);
 			this.classLoader = context.getClassLoader();
 			this.annotationType = annotationType;
+			// 设置各参数，根据这些参数进行寻找目标类
 			this.names = extract(attributes, "name");
 			this.annotations = extract(attributes, "annotation");
 			this.ignoredTypes = extract(attributes, "ignored", "ignoredType");

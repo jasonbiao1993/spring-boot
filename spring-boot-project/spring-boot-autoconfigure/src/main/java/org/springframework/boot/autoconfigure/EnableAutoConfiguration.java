@@ -74,6 +74,9 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
  * @see ConditionalOnClass
  * @see AutoConfigureAfter
  * @see SpringBootApplication
+ *
+ * AutoConfigurationImportSelector 自动化转配路口类
+ * 也可以自定义注解，通过Import实现该功能
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
