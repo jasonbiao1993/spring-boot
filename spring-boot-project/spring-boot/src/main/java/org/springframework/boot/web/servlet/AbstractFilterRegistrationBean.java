@@ -205,6 +205,7 @@ public abstract class AbstractFilterRegistrationBean<T extends Filter> extends D
 	@Override
 	protected Dynamic addRegistration(String description, ServletContext servletContext) {
 		Filter filter = getFilter();
+		// 向ServletContext 添加过滤器
 		return servletContext.addFilter(getOrDeduceName(filter), filter);
 	}
 

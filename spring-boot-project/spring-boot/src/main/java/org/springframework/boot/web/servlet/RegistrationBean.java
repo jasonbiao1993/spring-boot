@@ -34,6 +34,8 @@ import org.springframework.util.StringUtils;
  * @see FilterRegistrationBean
  * @see DelegatingFilterProxyRegistrationBean
  * @see ServletListenerRegistrationBean
+ *
+ * RegistrationBean类提供了一个模板方法：register，对应的注册组件执行各自的注册逻辑
  */
 public abstract class RegistrationBean implements ServletContextInitializer, Ordered {
 

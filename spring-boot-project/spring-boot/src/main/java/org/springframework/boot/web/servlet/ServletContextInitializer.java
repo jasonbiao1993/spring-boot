@@ -39,6 +39,8 @@ import org.springframework.web.WebApplicationInitializer;
  * @author Phillip Webb
  * @since 1.4.0
  * @see WebApplicationInitializer
+ *
+ * Servlet 容器初始化的时候，提供的初始化接口
  */
 @FunctionalInterface
 public interface ServletContextInitializer {
