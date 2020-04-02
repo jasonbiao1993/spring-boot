@@ -1,3 +1,7 @@
+# SpringBoot 扩展回调类
+https://blog.csdn.net/woshilijiuyi/article/details/85396492
+
+
 # SpringBoot 自动化装配
 springBoot为我们提供了自动化装配的功能，简单方便。可以像使用插件一样，对各个组件自由组合装配。只需引入定义好的 starter 即可。有点类似于java的SPI机制，只不过SPI机制是为了解决项目与项目之间的解耦，而starter方式实现了模块化完全解耦，实现热插拔功能。
 # SpringBoot 运行时监听器
