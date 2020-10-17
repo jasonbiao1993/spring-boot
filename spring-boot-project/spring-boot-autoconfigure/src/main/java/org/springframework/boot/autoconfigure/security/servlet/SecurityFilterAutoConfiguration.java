@@ -60,6 +60,8 @@ public class SecurityFilterAutoConfiguration {
 	@ConditionalOnBean(name = DEFAULT_FILTER_NAME)
 	public DelegatingFilterProxyRegistrationBean securityFilterChainRegistration(
 			SecurityProperties securityProperties) {
+
+		// DelegatingFilterProxy注册器
 		DelegatingFilterProxyRegistrationBean registration = new DelegatingFilterProxyRegistrationBean(
 				DEFAULT_FILTER_NAME);
 		registration.setOrder(securityProperties.getFilter().getOrder());

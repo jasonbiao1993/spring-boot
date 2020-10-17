@@ -33,6 +33,8 @@ import org.springframework.boot.web.servlet.ServletContextInitializer;
  *
  * @author Phillip Webb
  * @author Andy Wilkinson
+ *
+ * springboot 内置tomcat 启动, 通过TomcatServletWebServerFactoryy 创建，关联TomcatWebServer
  */
 class TomcatStarter implements ServletContainerInitializer {
 
